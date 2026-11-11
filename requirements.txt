@@ -40,7 +40,7 @@ future
 setuptools
 python-gitlab
 gitpython
-cryptography
+cryptography<49  # 49+ has no macOS x86_64 wheels; 48.0.1 is universal2
 javascripthon @ git+https://gitlab.com/peircej/metapensiero.pj
 astunparse
 esprima

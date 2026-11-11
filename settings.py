@@ -13,7 +13,8 @@ from pathlib import Path
 # Configure the Python version used in the packaged environment
 PYTHON_VERSION = os.environ.get("PYTHON_VERSION", '3.13')  # e.g., "3.12", "3.13"
 PY_TAG = f"py{PYTHON_VERSION.replace('.', '')}"  # e.g., "py313"
-CONDA_ENV_NAME = f"opensesame-{PY_TAG}"          # e.g., "opensesame-py313"
+CONDA_ENV_NAME = f"opensesame-{PY_TAG}-arm64"          # e.g., "opensesame-py313-arm64"
+SECOND_CONDA_ENV_NAME = f"opensesame-{PY_TAG}-x86_64"  # e.g., "opensesame-py313-x86_64"
 
 # Get the current user's home directory
 HOME = Path.home()
@@ -31,6 +32,10 @@ AUTHOR = "Sebastiaan Mathôt"
 
 # Full path to the anaconda environment folder to package (based on Python version)
 CONDA_ENV_PATH = str(HOME / "miniconda3" / "envs" / CONDA_ENV_NAME)
+
+# Optional second environment used to create a universal2 (arm64 + x86_64) app.
+# Leave empty to package a single-architecture app.
+SECOND_CONDA_ENV_PATH = str(HOME / "miniconda3" / "envs" / SECOND_CONDA_ENV_NAME)
 
 # Alternative: If you want to use conda's current environment:
 # import subprocess
@@ -73,7 +78,7 @@ ICON_PATH = str(RESOURCES_DIR / "opensesame.icns")
 ENTRY_SCRIPT = "opensesame"
 
 # Folder to place created APP and DMG in
-OUTPUT_FOLDER = str(BUILD_SCRIPTS_DIR)
+OUTPUT_FOLDER = str(BUILD_SCRIPTS_DIR / "build")
 
 # Alternative: Put output on Desktop
 # OUTPUT_FOLDER = str(HOME / "Desktop")
@@ -109,7 +114,7 @@ RESOURCE_DIR = ""
 # ===== Settings specific to dmgbuild =====
 
 # Create a DMG template name, with a Python version tag (e.g., -py313-)
-os_dmg_template = f'opensesame_{{}}-{PY_TAG}-macos-x64-1.dmg'
+os_dmg_template = f'opensesame_{{}}-{PY_TAG}-macos-universal2-1.dmg'
 
 # Name of the DMG file that will be created in OUTPUT_FOLDER
 DMG_FILE = os_dmg_template.format(VERSION)
@@ -131,6 +136,17 @@ DMG_ICON_SIZE = 80
 
 # Background of DMG file
 DMG_BACKGROUND = str(RESOURCES_DIR / "instructions.png")
+
+# Additional Info.plist entries. PyQt6 >= 6.12 requires macOS 14, so we target
+# macOS 14 and later only.
+PLIST_ADDITIONS = {
+    'LSMinimumSystemVersion': '14.0',
+}
+
+# Ad-hoc code signing ("-" = no Developer ID). Users will need to right-click
+# and select Open on first launch.
+CODE_SIGN = True
+SIGNING_IDENTITY = '-'
 
 # ===============================================================================
 # Extra settings and functions specific to OpenSesame (Remove for other apps)

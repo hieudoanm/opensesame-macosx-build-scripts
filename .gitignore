@@ -60,3 +60,8 @@ target/
 build_all
 
 .vscode
+
+# build
+*.dmg
+/build/
+OpenSesame.app/
